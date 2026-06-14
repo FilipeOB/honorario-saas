@@ -10,7 +10,6 @@ WORKDIR /app
 COPY --from=builder /root/.local /root/.local
 COPY app ./app
 COPY data ./data
-COPY .env.example .env
 ENV PATH=/root/.local/bin:$PATH
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1

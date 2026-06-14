@@ -1,8 +1,13 @@
+"""
+Aplicacao principal FastAPI - Sistema SaaS PrecificaJus
+"""
 import os
+import re
 from pathlib import Path
+from typing import Optional
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from .config import settings
 from .api.v1 import honorarios_router, auth_router, user_router, webhook_router
 from .database import init_db
@@ -41,11 +46,32 @@ async def health_check():
 
 
 @app.get("/", include_in_schema=False)
-async def frontend():
+async def frontend(token: Optional[str] = None):
+    """
+    Serve a calculadora.
+    Se receber ?token=JWT (redirect pos-login do site Hostinger),
+    armazena no localStorage via JS e redireciona para a rota limpa.
+    """
+    if token and re.match(r'^[A-Za-z0-9._-]+$', token):
+        # Token seguro (apenas caracteres JWT validos)
+        return HTMLResponse(
+            content=f"""<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>PrecificaJus - Carregando...</title>
+<style>body{{margin:0;background:#1B2A4A;display:flex;align-items:center;justify-content:center;height:100vh;font-family:Arial,sans-serif;}}.msg{{color:#C9A84C;font-size:18px;}}</style>
+</head>
+<body><div class="msg">Carregando sua area de trabalho...</div>
+<script>
+try{{localStorage.setItem('hp_token','{token}');}}catch(e){{}}
+window.location.replace('/');
+</script>
+</body></html>""",
+            status_code=200,
+        )
     index = STATIC_DIR / "index.html"
     if index.exists():
         return FileResponse(str(index))
-    return JSONResponse({"nome": settings.APP_NAME, "documentacao": "/api/docs"})
+    return JSONResponse({{"nome": settings.APP_NAME, "documentacao": "/api/docs"}})
 
 
 app.include_router(honorarios_router, prefix=settings.API_V1_STR)
@@ -56,7 +82,7 @@ app.include_router(webhook_router, prefix=settings.API_V1_STR)
 
 @app.exception_handler(ValueError)
 async def value_error_handler(request, exc):
-    return JSONResponse(status_code=400, content={"detail": str(exc)})
+    return JSONResponse(status_code=400, content={{"detail": str(exc)}})
 
 
 if __name__ == "__main__":

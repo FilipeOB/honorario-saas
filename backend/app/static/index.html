@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Honorarios Advocaticios</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1B2A4A; --navy-light: #243557; --gold: #C9A84C;
+    --green: #16a34a; --green-light: #dcfce7;
+    --orange: #d97706; --orange-light: #fef3c7;
+    --red: #dc2626; --red-light: #fee2e2;
+    --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+    --gray-400: #9ca3af; --gray-600: #4b5563; --gray-800: #1f2937;
+    --white: #ffffff; --radius: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.12); --shadow-lg: 0 4px 16px rgba(0,0,0,0.15);
+  }
+  body { font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--gray-100); color:var(--gray-800); min-height:100vh; font-size:14px; line-height:1.5; }
+  .header { background:var(--navy); color:var(--white); padding:14px 24px; display:flex; align-items:center; gap:12px; box-shadow:var(--shadow-lg); position:sticky; top:0; z-index:100; }
+  .header-logo { font-size:22px; } .header-title { font-size:17px; font-weight:600; } .header-sub { font-size:12px; color:rgba(255,255,255,0.6); margin-left:auto; }
+  .layout { display:grid; grid-template-columns:320px 1fr; min-height:calc(100vh - 53px); }
+  .sidebar { background:var(--navy); color:var(--white); overflow-y:auto; max-height:calc(100vh - 53px); position:sticky; top:53px; }
+  .sidebar-tabs { display:flex; border-bottom:1px solid rgba(255,255,255,0.1); }
+  .sidebar-tab { flex:1; padding:10px 6px; background:none; border:none; color:rgba(255,255,255,0.5); font-size:11px; font-weight:500; cursor:pointer; text-transform:uppercase; letter-spacing:0.05em; border-bottom:2px solid transparent; transition:all 0.15s; }
+  .sidebar-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+  .sidebar-panel { padding:16px; display:none; } .sidebar-panel.active { display:block; }
+  .sidebar-section { margin-bottom:20px; }
+  .sidebar-section-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--gold); margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  .field { margin-bottom:12px; } .field label { display:block; font-size:11px; font-weight:500; color:rgba(255,255,255,0.65); margin-bottom:4px; }
+  .field input, .field select { width:100%; padding:7px 10px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:6px; color:var(--white); font-size:13px; outline:none; }
+  .field input:focus, .field select:focus { border-color:var(--gold); background:rgba(255,255,255,0.12); }
+  .field select option { background:var(--navy); color:var(--white); }
+  .pagamento-row { display:grid; grid-template-columns:1fr 60px 60px; gap:6px; align-items:center; margin-bottom:8px; }
+  .pagamento-label { font-size:11px; color:rgba(255,255,255,0.65); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .pagamento-input { width:100%; padding:5px 6px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:5px; color:var(--white); font-size:12px; text-align:right; outline:none; }
+  .pagamento-input:focus { border-color:var(--gold); }
+  .pagamento-header { display:grid; grid-template-columns:1fr 60px 60px; gap:6px; margin-bottom:4px; }
+  .pagamento-header span { font-size:9px; font-weight:700; text-transform:uppercase; color:rgba(255,255,255,0.4); text-align:right; }
+  .pagamento-header span:first-child { text-align:left; }
+  .main { padding:20px; overflow-y:auto; }
+  .card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:16px; overflow:hidden; }
+  .card-header { padding:14px 18px; border-bottom:1px solid var(--gray-200); display:flex; align-items:center; gap:8px; background:var(--gray-50); }
+  .card-header-icon { font-size:16px; } .card-header-title { font-size:14px; font-weight:600; color:var(--navy); } .card-header-sub { font-size:11px; color:var(--gray-400); margin-left:auto; }
+  .card-body { padding:18px; }
+  .main-field { margin-bottom:14px; }
+  .main-field label { display:block; font-size:12px; font-weight:600; color:var(--gray-600); margin-bottom:5px; }
+  .main-field input, .main-field select { width:100%; padding:8px 12px; border:1px solid var(--gray-200); border-radius:6px; font-size:13px; color:var(--gray-800); outline:none; transition:border-color 0.15s; background:var(--white); }
+  .main-field input:focus, .main-field select:focus { border-color:var(--navy); box-shadow:0 0 0 3px rgba(27,42,74,0.1); }
+  .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; } .span-2 { grid-column:span 2; }
+  .oab-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+  .btn { padding:9px 18px; border:none; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; }
+  .btn-primary { background:var(--navy); color:var(--white); width:100%; padding:12px; font-size:14px; margin-top:8px; }
+  .btn-primary:hover { background:var(--navy-light); } .btn-primary:disabled { opacity:0.6; cursor:not-allowed; }
+  .btn-secondary { background:var(--gray-100); color:var(--gray-800); border:1px solid var(--gray-200); }
+  .btn-secondary:hover { background:var(--gray-200); }
+  .btn-oab { background:var(--gold); color:var(--white); width:100%; }
+  .btn-oab:hover { background:#b8943e; }
+  .loading-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:999; align-items:center; justify-content:center; }
+  .loading-overlay.active { display:flex; }
+  .loading-box { background:var(--white); border-radius:12px; padding:32px; text-align:center; }
+  .spinner { width:36px; height:36px; border:3px solid var(--gray-200); border-top-color:var(--navy); border-radius:50%; animation:spin 0.7s linear infinite; margin:0 auto 12px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .toast { position:fixed; bottom:20px; right:20px; padding:12px 18px; border-radius:8px; color:var(--white); font-size:13px; font-weight:500; z-index:1000; animation:fadeIn 0.2s; }
+  .toast-error { background:var(--red); } .toast-success { background:var(--green); }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  #resultado { display:none; }
+  .action-row { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .result-hero { background:var(--navy); color:var(--white); border-radius:var(--radius); padding:24px; margin-bottom:16px; text-align:center; }
+  .result-hero-label { font-size:13px; color:rgba(255,255,255,0.6); margin-bottom:4px; }
+  .result-hero-value { font-size:36px; font-weight:700; color:var(--gold); margin-bottom:4px; }
+  .result-hero-sub { font-size:12px; color:rgba(255,255,255,0.5); }
+  .result-hero-badges { margin-top:12px; }
+  .viability-badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+  .viability-ok { background:var(--green-light); color:var(--green); }
+  .viability-warning { background:var(--orange-light); color:var(--orange); }
+  .viability-danger { background:var(--red-light); color:var(--red); }
+  .result-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px; }
+  .result-card { background:var(--white); border:1px solid var(--gray-200); border-radius:var(--radius); padding:16px; }
+  .result-card-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--gray-400); margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--gray-200); }
+  .result-row { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--gray-100); }
+  .result-row:last-child { border-bottom:none; }
+  .result-row-label { font-size:12px; color:var(--gray-600); }
+  .result-row-value { font-size:13px; font-weight:600; color:var(--gray-800); }
+  .result-row-value.green { color:var(--green); } .result-row-value.red { color:var(--red); } .result-row-value.highlight { color:var(--navy); font-size:14px; }
+  .composicao-bar { display:flex; height:28px; border-radius:6px; overflow:hidden; margin-bottom:8px; }
+  .bar-segment { transition:width 0.3s; }
+  .bar-legend { display:flex; flex-wrap:wrap; gap:8px; }
+  .bar-legend-item { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--gray-600); }
+  .bar-dot { width:10px; height:10px; border-radius:2px; }
+  .oab-result { display:none; background:var(--green-light); border:1px solid var(--green); border-radius:6px; padding:12px 16px; margin-top:12px; align-items:center; justify-content:space-between; }
+  .oab-result-label { font-size:13px; font-weight:600; color:var(--navy); }
+  .oab-result-value { font-size:20px; font-weight:700; color:var(--green); }
+  .obs-list { list-style:none; } .obs-list li { padding:8px 12px; border-radius:6px; margin-bottom:6px; font-size:13px; }
+  .obs-ok { background:var(--green-light); color:var(--green); }
+  .obs-warning { background:var(--orange-light); color:var(--orange); }
+  .obs-info { background:var(--gray-100); color:var(--gray-600); }
+  @media (max-width:768px) { .layout { grid-template-columns:1fr; } .result-grid { grid-template-columns:1fr; } .form-grid { grid-template-columns:1fr; } }
+  @media print { .sidebar,.header,.action-row { display:none; } .main { padding:0; } }
+</style></head><body>
+<div class="loading-overlay" id="loadingOverlay"><div class="loading-box"><div class="spinner"></div><p style="color:var(--gray-600);font-weight:500;">Calculando honorarios...</p></div></div>
+<header class="header"><span class="header-logo">&#x2696;&#xFE0F;</span><span class="header-title">Calculadora de Honorarios Advocaticios</span><span class="header-sub">Sistema Profissional</span></header>
+<div class="layout">
+<aside class="sidebar">
+  <div class="sidebar-tabs">
+    <button class="sidebar-tab active" onclick="showTab('escritorio')">Escritorio</button>
+    <button class="sidebar-tab" onclick="showTab('encargos')">Encargos</button>
+    <button class="sidebar-tab" onclick="showTab('asaas')">Asaas</button>
+  </div>
+  <div class="sidebar-panel active" id="tab-escritorio">
+    <div class="sidebar-section"><div class="sidebar-section-title">Estrutura do Escritorio</div>
+      <div class="field"><label>Overhead Mensal (R$)</label><input type="number" id="overhead_mensal" value="10000" min="0" step="100"></div>
+      <div class="field"><label>Horas Uteis Faturáveis / Mês</label><input type="number" id="horas_uteis_mes" value="160" min="1" max="300"></div>
+      <div class="field"><label>Custo/Hora do Advogado (R$)</label><input type="number" id="custo_hora_adv" value="250" min="0" step="10"></div>
+      <div class="field"><label>Margem Objetivo (multiplicador)</label><input type="number" id="margem_objetivo" value="2.5" min="1.1" max="6" step="0.1"></div>
+    </div>
+    <div class="sidebar-section"><div class="sidebar-section-title">Custos em Tempo Real</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.8;">
+        Custo/hora overhead: <strong style="color:var(--white);" id="custo_overhead_hora">R$ 62,50</strong><br>
+        Custo/hora total: <strong style="color:var(--white);" id="custo_total_hora">R$ 312,50</strong><br>
+        Break-even 20h: <strong style="color:var(--gold);" id="breakeven_20h">R$ 6.250,00</strong>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-panel" id="tab-encargos">
+    <div class="sidebar-section"><div class="sidebar-section-title">Tributario</div>
+      <div class="field"><label>ISS (%)</label><input type="number" id="iss" value="5.0" min="0" max="10" step="0.1"></div>
+      <div class="field"><label>PIS + COFINS (%)</label><input type="number" id="pis_cofins" value="3.65" min="0" max="15" step="0.01"></div>
+      <div class="field"><label>IR Retido na Fonte (%)</label><input type="number" id="irrf" value="1.5" min="0" max="15" step="0.1"></div>
+    </div>
+    <div class="sidebar-section"><div class="sidebar-section-title">Carga Tributaria Total</div>
+      <div style="font-size:20px;font-weight:700;color:var(--gold);" id="carga_tributaria_total">10,15%</div>
+    </div>
+  </div>
+  <div class="sidebar-panel" id="tab-asaas">
+    <div class="sidebar-section"><div class="sidebar-section-title">Taxas por Metodo de Pagamento</div>
+      <div class="pagamento-header"><span>Metodo</span><span>Fixo R$</span><span>% taxa</span></div>
+      <div class="pagamento-row"><span class="pagamento-label">PIX</span><input class="pagamento-input" id="pix_fixo" type="number" value="1.99" step="0.01"><input class="pagamento-input" id="pix_pct" type="number" value="0" step="0.01"></div>
+      <div class="pagamento-row"><span class="pagamento-label">Boleto</span><input class="pagamento-input" id="boleto_fixo" type="number" value="1.99" step="0.01"><input class="pagamento-input" id="boleto_pct" type="number" value="0" step="0.01"></div>
+      <div class="pagamento-row"><span class="pagamento-label">Debito</span><input class="pagamento-input" id="debito_fixo" type="number" value="0.35" step="0.01"><input class="pagamento-input" id="debito_pct" type="number" value="1.89" step="0.01"></div>
+      <div class="pagamento-row"><span class="pagamento-label">Credito av</span><input class="pagamento-input" id="cred_av_fixo" type="number" value="0.49" step="0.01"><input class="pagamento-input" id="cred_av_pct" type="number" value="2.99" step="0.01"></div>
+      <div class="pagamento-row"><span class="pagamento-label">Credito 2-6x</span><input class="pagamento-input" id="cred_26_fixo" type="number" value="0.49" step="0.01"><input class="pagamento-input" id="cred_26_pct" type="number" value="3.49" step="0.01"></div>
+      <div class="pagamento-row"><span class="pagamento-label">Credito 7-12x</span><input class="pagamento-input" id="cred_712_fixo" type="number" value="0.49" step="0.01"><input class="pagamento-input" id="cred_712_pct" type="number" value="3.99" step="0.01"></div>
+    </div>
+  </div>
+</aside>
+<main class="main">
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">&#x1F4CB;</span><span class="card-header-title">Dados do Caso</span><span class="card-header-sub">Campos obrigatorios</span></div>
+    <div class="card-body">
+      <div class="form-grid">
+        <div class="main-field span-2"><label>Identificacao do Caso *</label><input type="text" id="nome_caso" placeholder="Ex: Joao Silva vs Empresa ABC" required></div>
+        <div class="main-field"><label>Estado (UF)</label><select id="uf">
+          <option value="RS">RS</option><option value="SP">SP</option><option value="MG">MG</option>
+          <option value="RJ">RJ</option><option value="BA">BA</option><option value="SC">SC</option>
+          <option value="PR">PR</option><option value="GO">GO</option><option value="DF">DF</option>
+          <option value="CE">CE</option><option value="PE">PE</option><option value="MA">MA</option>
+          <option value="PA">PA</option><option value="MT">MT</option><option value="MS">MS</option>
+          <option value="ES">ES</option><option value="AM">AM</option><option value="RN">RN</option>
+          <option value="AL">AL</option><option value="PB">PB</option><option value="PI">PI</option>
+          <option value="SE">SE</option><option value="TO">TO</option><option value="RO">RO</option>
+          <option value="AC">AC</option><option value="RR">RR</option><option value="AP">AP</option>
+        </select></div>
+        <div class="main-field"><label>Tipo de Acao</label><select id="tipo_acao">
+          <option value="civil_cobranca">Civil - Cobranca</option>
+          <option value="civil_responsabilidade">Civil - Responsabilidade</option>
+          <option value="civil_familia">Civil - Familia</option>
+          <option value="civil_empresarial">Civil - Empresarial</option>
+          <option value="civil_imobiliario">Civil - Imobiliario</option>
+          <option value="civil_revisional">Civil - Revisional</option>
+          <option value="trabalhista_empregado">Trabalhista - Empregado</option>
+          <option value="trabalhista_empregador">Trabalhista - Empregador</option>
+          <option value="tributario">Tributario</option>
+          <option value="criminal">Criminal</option>
+          <option value="previdenciario">Previdenciario</option>
+          <option value="ambiental">Ambiental</option>
+        </select></div>
+        <div class="main-field"><label>Fase Processual</label><select id="fase">
+          <option value="pre_processual">Pre-processual</option>
+          <option value="peticion_inicial" selected>Peticao Inicial</option>
+          <option value="defesa">Defesa</option>
+          <option value="em_andamento">Em andamento</option>
+          <option value="recursos">Recursos</option>
+          <option value="tribunais_superiores">Tribunais Superiores</option>
+          <option value="execucao">Execucao</option>
+          <option value="habeas_corpus_mandado_seguranca">HC / MS</option>
+        </select></div>
+        <div class="main-field"><label>Complexidade</label><select id="complexidade">
+          <option value="simples">Simples (1,00x)</option>
+          <option value="baixa">Baixa (1,30x)</option>
+          <option value="media" selected>Media (1,70x)</option>
+          <option value="alta">Alta (2,20x)</option>
+          <option value="muito_alta">Muito Alta (3,00x)</option>
+        </select></div>
+        <div class="main-field"><label>Probabilidade de Exito</label><select id="probabilidade_exito">
+          <option value="baixo">Baixa</option><option value="medio" selected>Media</option>
+          <option value="alto">Alta</option><option value="critico">Critico</option>
+        </select></div>
+        <div class="main-field"><label>Urgencia</label><select id="urgencia">
+          <option value="normal" selected>Normal (1,00x)</option>
+          <option value="urgente">Urgente (1,30x)</option>
+          <option value="muito_urgente">Muito Urgente (1,60x)</option>
+        </select></div>
+        <div class="main-field"><label>Duracao Estimada</label><select id="duracao">
+          <option value="curta">Curta - ate 6 meses (1,00x)</option>
+          <option value="media" selected>Media - 6-18 meses (1,15x)</option>
+          <option value="longa">Longa - 18-36 meses (1,30x)</option>
+          <option value="muito_longa">Muito Longa - acima 3 anos (1,50x)</option>
+        </select></div>
+        <div class="main-field"><label>Metodo de Pagamento</label><select id="metodo_pagamento">
+          <option value="pix" selected>PIX</option><option value="boleto">Boleto</option>
+          <option value="debito">Credito Debito</option><option value="cred_av">Credito a Vista</option>
+          <option value="cred_26">Credito 2-6x</option><option value="cred_712">Credito 7-12x</option>
+        </select></div>
+        <div class="main-field"><label>Valor da Causa (R$)</label><input type="number" id="valor_causa" value="0" min="0" step="1000"></div>
+        <div class="main-field"><label>Horas Estimadas *</label><input type="number" id="horas_estimadas" value="20" min="0.5" step="0.5" required></div>
+      </div>
+      <button class="btn btn-primary" onclick="calcular()" id="btnCalcular">Calcular Honorarios</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-header-icon">&#x1F4CA;</span><span class="card-header-title">Referencial OAB</span><span class="card-header-sub">Consulta de valores minimos</span></div>
+    <div class="card-body">
+      <div class="oab-grid">
+        <div class="main-field"><label>Area Juridica</label><select id="oab_area" onchange="carregarServicosOAB()"><option value="">Selecione a UF primeiro</option></select></div>
+        <div class="main-field"><label>Tipo de Servico</label><select id="oab_servico"><option value="">Selecione a area</option></select></div>
+        <div class="main-field"><label>&nbsp;</label><button class="btn btn-oab" onclick="consultarOAB()">Consultar OAB</button></div>
+        <div class="main-field" style="display:flex;align-items:flex-end;"><button class="btn btn-secondary" onclick="carregarAreasOAB()">Recarregar</button></div>
+      </div>
+      <div class="oab-result" id="oabResult">
+        <div><div class="oab-result-label" id="oabServicNome"></div><div style="font-size:11px;color:var(--gray-400);">Valor minimo OAB</div></div>
+        <div class="oab-result-value" id="oabValorMin"></div>
+      </div>
+    </div>
+  </div>
+  <div id="resultado">
+    <div class="action-row">
+      <button class="btn btn-secondary" onclick="window.print()">Imprimir</button>
+      <button class="btn btn-secondary" onclick="copiarResultado()">Copiar Texto</button>
+      <button class="btn btn-secondary" onclick="limparResultado()">Limpar</button>
+    </div>
+    <div class="result-hero">
+      <div class="result-hero-label" id="resultCaso">-</div>
+      <div class="result-hero-value" id="resultValorFinal">R$ 0,00</div>
+      <div class="result-hero-sub">Valor final a cobrar do cliente</div>
+      <div class="result-hero-badges"><span id="resultViabilidade" class="viability-badge">-</span></div>
+    </div>
+    <div class="result-grid">
+      <div class="result-card"><div class="result-card-title">Custos Internos</div>
+        <div class="result-row"><span class="result-row-label">Custo direto</span><span class="result-row-value" id="rc_custo_direto">-</span></div>
+        <div class="result-row"><span class="result-row-label">Overhead</span><span class="result-row-value" id="rc_overhead">-</span></div>
+        <div class="result-row"><span class="result-row-label">Break-even</span><span class="result-row-value highlight" id="rc_breakeven">-</span></div>
+        <div class="result-row"><span class="result-row-label">Multiplicador</span><span class="result-row-value green" id="rc_multiplicador">-</span></div>
+        <div class="result-row"><span class="result-row-label">ROI</span><span class="result-row-value" id="rc_roi">-</span></div>
+      </div>
+      <div class="result-card"><div class="result-card-title">Tributario</div>
+        <div class="result-row"><span class="result-row-label">ISS</span><span class="result-row-value" id="rc_iss">-</span></div>
+        <div class="result-row"><span class="result-row-label">PIS + COFINS</span><span class="result-row-value" id="rc_pis">-</span></div>
+        <div class="result-row"><span class="result-row-label">IRRF</span><span class="result-row-value" id="rc_irrf">-</span></div>
+        <div class="result-row"><span class="result-row-label">Total tributario</span><span class="result-row-value red" id="rc_trib_total">-</span></div>
+      </div>
+      <div class="result-card"><div class="result-card-title">Composicao Final</div>
+        <div class="result-row"><span class="result-row-label">Honorario base</span><span class="result-row-value" id="rc_honor_base">-</span></div>
+        <div class="result-row"><span class="result-row-label">Impostos + taxas</span><span class="result-row-value red" id="rc_impostos">-</span></div>
+        <div class="result-row"><span class="result-row-label">Taxa Asaas</span><span class="result-row-value" id="rc_asaas">-</span></div>
+        <div class="result-row"><span class="result-row-label">Margem bruta</span><span class="result-row-value green" id="rc_margem">-</span></div>
+        <div class="result-row"><span class="result-row-label"><strong>Valor Final</strong></span><span class="result-row-value highlight" id="rc_final">-</span></div>
+      </div>
+    </div>
+    <div class="card"><div class="card-header"><span class="card-header-icon">&#x1F4CA;</span><span class="card-header-title">Composicao do Valor</span></div>
+      <div class="card-body"><div class="composicao-bar" id="composicaoBar"></div><div class="bar-legend" id="composicaoLegend"></div></div>
+    </div>
+    <div class="card" id="oabRefCard" style="display:none;"><div class="card-header"><span class="card-header-icon">&#x1F4DC;</span><span class="card-header-title">Comparativo OAB</span></div>
+      <div class="card-body"><div class="result-grid" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="result-card"><div class="result-card-title">Minimo OAB</div><div style="font-size:22px;font-weight:700;color:var(--navy);" id="oab_min_ref">-</div></div>
+        <div class="result-card"><div class="result-card-title">% sobre causa</div><div style="font-size:22px;font-weight:700;color:var(--orange);" id="oab_pct_causa">-</div></div>
+        <div class="result-card"><div class="result-card-title">Honorario Exito</div><div style="font-size:22px;font-weight:700;color:var(--green);" id="oab_exito">-</div></div>
+      </div></div>
+    </div>
+    <div class="card" id="obsCard"><div class="card-header"><span class="card-header-icon">&#x1F4A1;</span><span class="card-header-title">Observacoes e Alertas</span></div>
+      <div class="card-body"><ul class="obs-list" id="observacoes"></ul></div>
+    </div>
+  </div>
+</main></div>
+<script>
+const API='';
+const fmt=v=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
+const fmtPct=v=>((v||0).toFixed(2).replace('.',','))+'%';
+const fmtX=v=>((v||0).toFixed(2).replace('.',','))+'x';
+function getVal(id){return document.getElementById(id)?.value||'';}
+function getNum(id){return parseFloat(getVal(id))||0;}
+function showTab(name){
+  document.querySelectorAll('.sidebar-tab').forEach((t,i)=>t.classList.toggle('active',['escritorio','encargos','asaas'][i]===name));
+  document.querySelectorAll('.sidebar-panel').forEach(p=>p.classList.toggle('active',p.id==='tab-'+name));
+}
+function showLoading(on){document.getElementById('loadingOverlay').classList.toggle('active',on);}
+function showToast(msg,type='error'){const t=document.createElement('div');t.className='toast toast-'+type;t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),4000);}
+function set(id,text){const el=document.getElementById(id);if(el)el.textContent=text;}
+function updateSidebarCalc(){
+  const o=getNum('overhead_mensal'),h=getNum('horas_uteis_mes')||160,c=getNum('custo_hora_adv');
+  const oh=o/h,tot=c+oh;
+  set('custo_overhead_hora',fmt(oh));set('custo_total_hora',fmt(tot));set('breakeven_20h',fmt(tot*20));
+}
+function updateCargaTrib(){set('carga_tributaria_total',fmtPct(getNum('iss')+getNum('pis_cofins')+getNum('irrf')));}
+function buildRequest(){return{
+  configuracao:{overhead_mensal:getNum('overhead_mensal'),horas_uteis_mes:getNum('horas_uteis_mes'),custo_hora_adv:getNum('custo_hora_adv'),margem_objetivo:getNum('margem_objetivo')},
+  encargos:{iss:getNum('iss'),pis_cofins:getNum('pis_cofins'),irrf:getNum('irrf')},
+  metodos_pagamento:{
+    pix:{nome:'PIX',fixo:getNum('pix_fixo'),percentual:getNum('pix_pct')},
+    boleto:{nome:'Boleto',fixo:getNum('boleto_fixo'),percentual:getNum('boleto_pct')},
+    debito:{nome:'Debito',fixo:getNum('debito_fixo'),percentual:getNum('debito_pct')},
+    cred_av:{nome:'Credito vista',fixo:getNum('cred_av_fixo'),percentual:getNum('cred_av_pct')},
+    cred_26:{nome:'Credito 2-6x',fixo:getNum('cred_26_fixo'),percentual:getNum('cred_26_pct')},
+    cred_712:{nome:'Credito 7-12x',fixo:getNum('cred_712_fixo'),percentual:getNum('cred_712_pct')},
+  },
+  caso:{nome_caso:getVal('nome_caso')||'Sem identificacao',tipo_acao:getVal('tipo_acao'),fase:getVal('fase'),complexidade:getVal('complexidade'),valor_causa:getNum('valor_causa'),horas_estimadas:getNum('horas_estimadas'),probabilidade_exito:getVal('probabilidade_exito'),urgencia:getVal('urgencia'),duracao:getVal('duracao'),metodo_pagamento:getVal('metodo_pagamento'),uf:getVal('uf')},
+};}
+async function calcular(){
+  const nome=getVal('nome_caso').trim();
+  if(!nome){showToast('Informe a identificacao do caso.');return;}
+  if(getNum('horas_estimadas')<=0){showToast('Horas estimadas deve ser maior que zero.');return;}
+  const btn=document.getElementById('btnCalcular');btn.disabled=true;showLoading(true);
+  try{
+    const r=await fetch(API+'/api/v1/honorarios/calcular',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(buildRequest())});
+    if(!r.ok){const e=await r.json().catch(()=>({detail:r.statusText}));throw new Error(e.detail||'Erro '+r.status);}
+    const d=await r.json();renderResultado(d);
+    document.getElementById('resultado').scrollIntoView({behavior:'smooth',block:'start'});
+    showToast('Calculo realizado!','success');
+  }catch(e){showToast('Erro: '+e.message);}
+  finally{btn.disabled=false;showLoading(false);}
+}
+function renderResultado(d){
+  document.getElementById('resultado').style.display='block';
+  const cb=d.calculo_base||d['calculo_base']||{};
+  const trib=d.tributario||{},comp=d.composicao||{},asaas=d.asaas||{};
+  set('resultCaso',d.caso||'-');set('resultValorFinal',fmt(comp.valor_final));
+  const vib=d.viabilidade||'ok',vibEl=document.getElementById('resultViabilidade');
+  vibEl.textContent=vib==='ok'?'Viavel':vib==='warning'?'Atencao':'Inviavel';
+  vibEl.className='viability-badge viability-'+vib;
+  set('rc_custo_direto',fmt(cb.custo_direto));set('rc_overhead',fmt(cb.overhead_alocado));
+  set('rc_breakeven',fmt(cb.custo_total));set('rc_multiplicador',fmtX(cb.multiplicador_total));
+  const roi=cb.roi||0,roiEl=document.getElementById('rc_roi');
+  roiEl.textContent=fmtPct(roi);roiEl.className='result-row-value '+(roi>=100?'green':roi>=50?'':'red');
+  set('rc_iss',fmt(trib.iss_valor));set('rc_pis',fmt(trib.pis_cofins_valor));set('rc_irrf',fmt(trib.irrf_valor));set('rc_trib_total',fmt(trib.total_tributario));
+  set('rc_honor_base',fmt(comp.honor_base));set('rc_impostos',fmt(comp.total_impostos_taxas));set('rc_asaas',fmt(asaas.valor_total));set('rc_margem',fmt(cb.margem_bruta));set('rc_final',fmt(comp.valor_final));
+  const total=comp.valor_final||1;
+  const segs=[{l:'Custo Direto',v:cb.custo_direto,c:'#1B2A4A'},{l:'Overhead',v:cb.overhead_alocado,c:'#2d4a7a'},{l:'Margem',v:cb.margem_bruta-(trib.total_tributario||0)-(asaas.valor_total||0),c:'#16a34a'},{l:'Tributario',v:trib.total_tributario,c:'#dc2626'},{l:'Asaas',v:asaas.valor_total,c:'#C9A84C'}];
+  document.getElementById('composicaoBar').innerHTML=segs.map(s=>'<div class="bar-segment" style="width:'+Math.max(0,(s.v/total)*100).toFixed(1)+'%;background:'+s.c+'" title="'+s.l+': '+fmt(s.v)+'"></div>').join('');
+  document.getElementById('composicaoLegend').innerHTML=segs.map(s=>'<div class="bar-legend-item"><div class="bar-dot" style="background:'+s.c+'"></div>'+s.l+': '+fmt(s.v)+'</div>').join('');
+  if(d.valor_oab_minimo){document.getElementById('oabRefCard').style.display='block';set('oab_min_ref',fmt(d.valor_oab_minimo));set('oab_pct_causa',d.percentual_causa?fmtPct(d.percentual_causa):'-');set('oab_exito',d.honor_exito_sugerido?fmt(d.honor_exito_sugerido):'-');}else{document.getElementById('oabRefCard').style.display='none';}
+  const obs=d.observacoes||[],ul=document.getElementById('observacoes');
+  if(obs.length>0){ul.innerHTML=obs.map(o=>'<li class="obs-'+(o.toLowerCase().includes('acima')||o.toLowerCase().includes('saud')?'ok':o.toLowerCase().includes('abaixo')||o.toLowerCase().includes('aten')?'warning':'info')+'">'+o+'</li>').join('');document.getElementById('obsCard').style.display='block';}else{document.getElementById('obsCard').style.display='none';}
+}
+function limparResultado(){document.getElementById('resultado').style.display='none';}
+async function carregarAreasOAB(){const uf=getVal('uf'),sel=document.getElementById('oab_area');sel.innerHTML='<option>Carregando...</option>';try{const r=await fetch(API+'/api/v1/honorarios/oab/'+uf+'/areas');if(!r.ok)throw new Error();const a=await r.json();sel.innerHTML='<option value="">Selecione a area</option>';Object.entries(a).forEach(([k,v])=>sel.innerHTML+='<option value="'+k+'">'+v+'</option>');document.getElementById('oab_servico').innerHTML='<option value="">Selecione a area</option>';}catch(e){sel.innerHTML='<option value="">Tabela nao disponivel</option>';}}
+async function carregarServicosOAB(){const uf=getVal('uf'),area=getVal('oab_area');if(!area)return;const sel=document.getElementById('oab_servico');sel.innerHTML='<option>Carregando...</option>';try{const r=await fetch(API+'/api/v1/honorarios/oab/'+uf+'/areas/'+area+'/servicos');if(!r.ok)throw new Error();const s=await r.json();sel.innerHTML='<option value="">Selecione o servico</option>';Object.entries(s).forEach(([k,v])=>sel.innerHTML+='<option value="'+k+'">'+(v.nome||k)+'</option>');}catch(e){sel.innerHTML='<option>Erro</option>';}}
+async function consultarOAB(){const uf=getVal('uf'),area=getVal('oab_area'),serv=getVal('oab_servico');if(!area||!serv){showToast('Selecione area e servico.');return;}try{const r=await fetch(API+'/api/v1/honorarios/oab/'+uf+'/areas/'+area+'/servicos/'+serv+'/valor');if(!r.ok)throw new Error('nao encontrado');const data=await r.json();const div=document.getElementById('oabResult');div.style.display='flex';set('oabServicNome',data.nome||serv);set('oabValorMin',fmt(data.valor_minimo));}catch(e){showToast('OAB: '+e.message);}}
+function copiarResultado(){const t='PRECIFICACAO DE HONORARIOS
+'+('='.repeat(40))+'
+Caso: '+document.getElementById('resultCaso')?.textContent+'
+Valor Final: '+document.getElementById('resultValorFinal')?.textContent;navigator.clipboard.writeText(t).then(()=>showToast('Copiado!','success')).catch(()=>showToast('Erro ao copiar'));}
+document.addEventListener('DOMContentLoaded',()=>{
+  ['overhead_mensal','horas_uteis_mes','custo_hora_adv','margem_objetivo'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateSidebarCalc));
+  ['iss','pis_cofins','irrf'].forEach(id=>document.getElementById(id)?.addEventListener('input',updateCargaTrib));
+  document.getElementById('uf')?.addEventListener('change',carregarAreasOAB);
+  updateSidebarCalc();updateCargaTrib();carregarAreasOAB();
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.ctrlKey)calcular();});
+</script></body></html>

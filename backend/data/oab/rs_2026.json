@@ -1,0 +1,90 @@
+{
+  "estado": "RS",
+  "ano": 2026,
+  "data_vigencia": "2026-01-01",
+  "observacoes": "Tabela OAB - Secao Rio Grande do Sul",
+  "areas": {
+    "civil": {
+      "nome": "Direito Civil",
+      "servicos": {
+        "procedimento_ordinario_proposicao": {"nome": "Procedimento ordinario: proposicao ou defesa", "valor_minimo": 8900, "descricao": "Acao civil de conhecimento, rito ordinario"},
+        "procedimento_sumario_proposicao": {"nome": "Procedimento sumario: proposicao ou defesa", "valor_minimo": 6200, "descricao": "Acao civil em rito sumario"},
+        "cumprimento_sentenca": {"nome": "Cumprimento de sentenca", "valor_minimo": 4950, "descricao": "Execucao de sentenca condenatoria"},
+        "impugnacao_cumprimento": {"nome": "Impugnacao ao cumprimento", "valor_minimo": 4950, "descricao": "Defesa em cumprimento de sentenca"},
+        "execucao_titulo_extrajudicial": {"nome": "Execucao de titulo extrajudicial", "valor_minimo": 4950, "descricao": "Execucao de cheque, nota promissoria, contrato"},
+        "mandado_seguranca": {"nome": "Mandado de seguranca", "valor_minimo": 9850, "descricao": "Protecao de direito liquido e certo"},
+        "medida_cautelar": {"nome": "Medida cautelar", "valor_minimo": 4950, "descricao": "Acao cautelar autonoma"},
+        "tutela_antecipada": {"nome": "Tutela antecipada", "valor_minimo": 4950, "descricao": "Antecipacao de tutela"}
+      }
+    },
+    "trabalhista": {
+      "nome": "Direito Trabalhista",
+      "servicos": {
+        "reclamacao_trabalhista_reclamante": {"nome": "Reclamacao - patrocinio reclamante", "valor_minimo": 3000, "descricao": "Acao por parte do empregado"},
+        "defesa_reclamada": {"nome": "Defesa reclamada", "valor_minimo": 6200, "descricao": "Defesa do empregador em reclamacao trabalhista"},
+        "recurso_ordinario": {"nome": "Recurso ordinario", "valor_minimo": 4460, "descricao": "Apelacao em processo trabalhista"},
+        "recurso_revista": {"nome": "Recurso de revista", "valor_minimo": 6200, "descricao": "Recurso para TST"},
+        "mandado_seguranca_trab": {"nome": "Mandado de seguranca", "valor_minimo": 6000, "descricao": "Mandado de seguranca trabalhista"},
+        "dissidio_coletivo": {"nome": "Dissidio coletivo", "valor_minimo": 9850, "descricao": "Dissidio coletivo"}
+      }
+    },
+    "previdenciario": {
+      "nome": "Direito Previdenciario",
+      "servicos": {
+        "concessao_beneficio": {"nome": "Concessao de beneficio", "valor_minimo": 2500, "descricao": "Requerimento administrativo de beneficio"},
+        "revisao_administrativa": {"nome": "Revisao administrativa", "valor_minimo": 2865, "descricao": "Revisao de beneficio na esfera administrativa"},
+        "acao_concessao": {"nome": "Acao de concessao de beneficio", "valor_minimo": 2500, "descricao": "Acao judicial de concessao"},
+        "acao_revisao": {"nome": "Acao de revisao de beneficio", "valor_minimo": 2500, "descricao": "Acao judicial de revisao"},
+        "mandado_seguranca_prev": {"nome": "Mandado de seguranca", "valor_minimo": 6072, "descricao": "Mandado de seguranca previdenciario"},
+        "recurso_administrativo_prev": {"nome": "Recurso administrativo", "valor_minimo": 2500, "descricao": "Recurso na esfera administrativa"}
+      }
+    },
+    "familia": {
+      "nome": "Direito de Familia",
+      "servicos": {
+        "divorcio_consensual": {"nome": "Divorcio consensual (escritura)", "valor_minimo": 6000, "descricao": "Divorcio por escritura publica"},
+        "divorcio_litigioso": {"nome": "Divorcio litigioso", "valor_minimo": 17340, "descricao": "Acao de divorcio com litigio"},
+        "alimentos": {"nome": "Alimentos", "valor_minimo": 6000, "descricao": "Acao de alimentos"},
+        "guarda_regulamentacao": {"nome": "Guarda e regulamentacao", "valor_minimo": 12000, "descricao": "Acao de guarda e regulamentacao de visitas"},
+        "investigacao_paternidade": {"nome": "Investigacao de paternidade", "valor_minimo": 16500, "descricao": "Acao de investigacao de paternidade"},
+        "sucessao_hereditaria": {"nome": "Sucessao hereditaria", "valor_minimo": 15000, "descricao": "Inventario ou partilha judicial"}
+      }
+    },
+    "imobiliario": {
+      "nome": "Direito Imobiliario",
+      "servicos": {
+        "acao_possessoria": {"nome": "Acao possessoria", "valor_minimo": 9800, "descricao": "Acao de reintegracao ou manutencao de posse"},
+        "usucapiao": {"nome": "Usucapiao judicial", "valor_minimo": 9800, "descricao": "Acao de usucapiao"},
+        "despejo": {"nome": "Despejo", "valor_minimo": 7200, "descricao": "Acao de despejo por falta de pagamento"},
+        "acao_renovatoria": {"nome": "Acao renovatoria", "valor_minimo": 7200, "descricao": "Acao renovatoria de locacao"},
+        "retificacao_registro": {"nome": "Retificacao de registro", "valor_minimo": 5390, "descricao": "Acao de retificacao de registro imobiliario"},
+        "reintegracao_posse": {"nome": "Reintegracao de posse", "valor_minimo": 9800, "descricao": "Acao de reintegracao de posse"}
+      }
+    },
+    "empresarial": {
+      "nome": "Direito Empresarial",
+      "servicos": {
+        "acao_constituicao_dissolucao": {"nome": "Acao de constituicao/dissolucao", "valor_minimo": 9850, "descricao": "Constituicao ou dissolucao de sociedade"},
+        "apuracao_haveres": {"nome": "Apuracao de haveres", "valor_minimo": 16000, "descricao": "Acao de apuracao de haveres"},
+        "indenizacao": {"nome": "Indenizacao", "valor_minimo": 14000, "descricao": "Acao por indenizacao"},
+        "dissolucao_sociedade": {"nome": "Dissolucao de sociedade", "valor_minimo": 12000, "descricao": "Acao de dissolucao de sociedade"}
+      }
+    },
+    "tributario": {
+      "nome": "Direito Tributario",
+      "servicos": {
+        "defesa_administrativa_1inst": {"nome": "Defesa administrativa - 1a inst.", "valor_minimo": 7000, "descricao": "Defesa em processo administrativo tributario"},
+        "acao_anulatoria": {"nome": "Acao anulatoria", "valor_minimo": 14860, "descricao": "Acao anulatoria de debito fiscal"},
+        "mandado_seguranca_trib": {"nome": "Mandado de seguranca", "valor_minimo": 9000, "descricao": "Mandado de seguranca tributario"}
+      }
+    },
+    "penal": {
+      "nome": "Direito Penal",
+      "servicos": {
+        "defesa_comum": {"nome": "Defesa comum", "valor_minimo": 25000, "descricao": "Defesa em processo penal comum"},
+        "habeas_corpus": {"nome": "Habeas corpus", "valor_minimo": 23530, "descricao": "Habeas corpus"},
+        "recurso_apelacao": {"nome": "Recurso de apelacao", "valor_minimo": 17340, "descricao": "Apelacao em processo penal"}
+      }
+    }
+  }
+}

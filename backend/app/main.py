@@ -1,13 +1,10 @@
-"""
-Aplicacao principal FastAPI - Sistema SaaS de Honorarios Advocaticios
-"""
 import os
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from .config import settings
-from .api.v1 import honorarios_router, auth_router, user_router
+from .api.v1 import honorarios_router, auth_router, user_router, webhook_router
 from .database import init_db
 
 STATIC_DIR = Path(__file__).parent / "static"
@@ -31,7 +28,6 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    """Inicializa banco de dados na subida da aplicacao"""
     db_path = os.environ.get("DATABASE_PATH", "./honorarios.db")
     db_dir = os.path.dirname(db_path)
     if db_dir and db_dir != ".":
@@ -46,7 +42,6 @@ async def health_check():
 
 @app.get("/", include_in_schema=False)
 async def frontend():
-    """Serve a calculadora (frontend HTML estatico)"""
     index = STATIC_DIR / "index.html"
     if index.exists():
         return FileResponse(str(index))
@@ -56,6 +51,7 @@ async def frontend():
 app.include_router(honorarios_router, prefix=settings.API_V1_STR)
 app.include_router(auth_router, prefix=settings.API_V1_STR)
 app.include_router(user_router, prefix=settings.API_V1_STR)
+app.include_router(webhook_router, prefix=settings.API_V1_STR)
 
 
 @app.exception_handler(ValueError)

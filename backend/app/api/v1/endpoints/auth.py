@@ -138,3 +138,32 @@ def create_user(
     db.commit()
     db.refresh(user)
     return user
+
+
+@router.post("/setup", response_model=UserOut, status_code=201)
+def setup_first_user(body: CreateUserRequest, db: Session = Depends(get_db)):
+    """
+    Cria o primeiro usuario administrador.
+    BLOQUEADO automaticamente assim que qualquer usuario existir no banco.
+    Use apenas na primeira inicializacao do sistema.
+    """
+    total = db.query(User).count()
+    if total > 0:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Setup ja realizado. Use /create-user com x-admin-secret.",
+        )
+    email = body.email.lower().strip()
+    user = User(
+        email=email,
+        password_hash=hash_password(body.password),
+        name=body.name,
+        plan=body.plan or "admin",
+        must_change_password=False,
+    )
+    db.add(user)
+    db.flush()
+    db.add(UserSettings(user_id=user.id))
+    db.commit()
+    db.refresh(user)
+    return user

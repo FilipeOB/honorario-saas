@@ -3,74 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculadora de Honorários Advocatícios</title>
+<title>PrecificaJus Pro - Calculadora de Honorários</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --navy: #1B2A4A;
-    --navy-light: #243557;
-    --gold: #C9A84C;
-    --green: #16a34a;
-    --green-light: #dcfce7;
-    --orange: #d97706;
-    --orange-light: #fef3c7;
-    --red: #dc2626;
-    --red-light: #fee2e2;
+    --primary: #1B2A4A;
+    --primary-dark: #0F1A2E;
+    --primary-light: #2D4A7A;
+    --accent: #C9A84C;
+    --accent-light: #D4B76A;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f97316;
     --gray-50: #f9fafb;
     --gray-100: #f3f4f6;
     --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
     --gray-400: #9ca3af;
     --gray-600: #4b5563;
     --gray-800: #1f2937;
     --white: #ffffff;
-    --radius: 8px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
-    --shadow-lg: 0 4px 16px rgba(0,0,0,0.15);
+    --radius: 12px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow: 0 4px 12px rgba(27,42,74,0.12);
+    --shadow-lg: 0 12px 32px rgba(27,42,74,0.15);
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0%, 100% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes glow {
+    0%, 100% {
+      box-shadow: 0 0 5px rgba(201, 168, 76, 0.3), 0 4px 12px rgba(27,42,74,0.12);
+    }
+    50% {
+      box-shadow: 0 0 15px rgba(201, 168, 76, 0.6), 0 4px 20px rgba(27,42,74,0.18);
+    }
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--gray-100);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
     color: var(--gray-800);
     min-height: 100vh;
     font-size: 14px;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 
   /* ─── HEADER ─── */
   .header {
-    background: var(--navy);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     color: var(--white);
-    padding: 14px 24px;
+    padding: 12px 32px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 18px;
     box-shadow: var(--shadow-lg);
     position: sticky;
     top: 0;
     z-index: 100;
+    animation: slideDown 0.6s ease;
   }
-  .header-logo { font-size: 22px; }
-  .header-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
-  .header-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-left: auto; }
+
+  .header-logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-right: 16px;
+    border-right: 2px solid var(--accent);
+  }
+
+  .header-logo-img {
+    width: 44px;
+    height: 44px;
+    background: var(--white);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .header-logo {
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .header-logo-main {
+    font-size: 18px;
+    color: var(--white);
+  }
+
+  .header-logo-sub {
+    font-size: 10px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .header-title {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .header-title .accent {
+    color: var(--accent);
+  }
+
+  .header-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    margin-left: auto;
+  }
 
   /* ─── LAYOUT ─── */
   .layout {
     display: grid;
-    grid-template-columns: 320px 1fr;
-    min-height: calc(100vh - 53px);
+    grid-template-columns: 1fr;
+    min-height: calc(100vh - 60px);
     gap: 0;
   }
 
   /* ─── SIDEBAR ─── */
   .sidebar {
-    background: var(--navy);
+    background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
     color: var(--white);
     overflow-y: auto;
-    max-height: calc(100vh - 53px);
+    max-height: calc(100vh - 60px);
     position: sticky;
-    top: 53px;
+    top: 60px;
+    display: none;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none !important; }
+    .layout { grid-template-columns: 1fr; }
   }
 
   .sidebar-tabs {
@@ -132,10 +243,162 @@
     transition: border-color 0.15s;
   }
   .field input:focus, .field select:focus {
-    border-color: var(--gold);
+    border-color: var(--primary-light);
     background: rgba(255,255,255,0.12);
   }
-  .field select option { background: var(--navy); color: var(--white); }
+  .field select option { background: var(--primary); color: var(--white); }
+
+  /* ─── SLIDERS PREMIUM ─── */
+  .slider-section {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+    border: 2px solid transparent;
+    border-image: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%) 1;
+    animation: fadeInUp 0.8s ease;
+    position: relative;
+  }
+
+  .slider-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: shimmer 2s infinite;
+    background-size: 200% 100%;
+  }
+
+  .slider-section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+  }
+
+  .slider-section-title::before {
+    content: '✨';
+    font-size: 24px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .slider-group {
+    margin-bottom: 36px;
+  }
+
+  .slider-group:last-child { margin-bottom: 0; }
+
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 12px;
+  }
+
+  .slider-label-text {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-800);
+  }
+
+  .slider-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  .slider-description {
+    font-size: 12px;
+    color: var(--gray-600);
+    margin-bottom: 14px;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, rgba(27, 42, 74, 0.15) 0%, rgba(201, 168, 76, 0.15) 100%);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  input[type="range"]:hover {
+    height: 8px;
+    box-shadow: 0 0 12px rgba(201, 168, 76, 0.25);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(201, 168, 76, 0.4), 0 0 0 3px rgba(27, 42, 74, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid var(--primary);
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 6px 16px rgba(201, 168, 76, 0.6), 0 0 0 4px rgba(27, 42, 74, 0.15);
+  }
+
+  input[type="range"]::-webkit-slider-thumb:active {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(201, 168, 76, 0.5), 0 0 0 3px rgba(27, 42, 74, 0.1);
+  }
+
+  input[type="range"]::-moz-range-track {
+    background: transparent;
+    border: none;
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    cursor: pointer;
+    border: 2px solid var(--primary);
+    box-shadow: 0 4px 12px rgba(201, 168, 76, 0.4), 0 0 0 3px rgba(27, 42, 74, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  input[type="range"]::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 6px 16px rgba(201, 168, 76, 0.6), 0 0 0 4px rgba(27, 42, 74, 0.15);
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--gray-600);
+    font-weight: 500;
+  }
+
+  .slider-labels strong {
+    color: var(--primary-light);
+  }
 
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
@@ -184,36 +447,63 @@
 
   /* ─── MAIN ─── */
   .main {
-    padding: 20px;
+    padding: 32px;
     overflow-y: auto;
+    animation: fadeInUp 0.8s ease;
+  }
+
+  @media (max-width: 768px) {
+    .main { padding: 16px; }
   }
 
   .card {
     background: var(--white);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     overflow: hidden;
+    border: 2px solid transparent;
+    border-image: linear-gradient(135deg, transparent 0%, rgba(201, 168, 76, 0.2) 50%, transparent 100%) 1;
+    animation: fadeInUp 0.8s ease backwards;
+    transition: all 0.3s ease;
   }
 
+  .card:hover {
+    box-shadow: var(--shadow-lg);
+    border-image: linear-gradient(135deg, transparent 0%, var(--accent) 50%, transparent 100%) 1;
+  }
+
+  .card:nth-child(1) { animation-delay: 0.1s; }
+  .card:nth-child(2) { animation-delay: 0.2s; }
+  .card:nth-child(3) { animation-delay: 0.3s; }
+  .card:nth-child(4) { animation-delay: 0.4s; }
+
   .card-header {
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--gray-200);
+    padding: 18px 24px;
+    border-bottom: 2px solid transparent;
+    border-image: linear-gradient(90deg, var(--primary), var(--accent), var(--primary)) 1;
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: var(--gray-50);
+    gap: 10px;
+    background: linear-gradient(135deg, rgba(27, 42, 74, 0.02) 0%, rgba(201, 168, 76, 0.03) 100%);
   }
-  .card-header-icon { font-size: 16px; }
+  .card-header-icon {
+    font-size: 22px;
+    animation: pulse 2s ease-in-out infinite;
+  }
   .card-header-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--navy);
+    font-size: 16px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
   .card-header-sub {
-    font-size: 11px;
-    color: var(--gray-400);
+    font-size: 12px;
+    color: var(--accent);
     margin-left: auto;
+    font-weight: 600;
   }
 
   .card-body { padding: 18px; }
@@ -278,31 +568,77 @@
     white-space: nowrap;
   }
   .btn-primary {
-    background: var(--navy);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     color: var(--white);
     width: 100%;
     justify-content: center;
-    padding: 12px;
-    font-size: 14px;
-    margin-top: 4px;
+    padding: 14px;
+    font-size: 15px;
+    margin-top: 8px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(27, 42, 74, 0.3);
+    letter-spacing: 0.3px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: var(--shadow); }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(27, 42, 74, 0.4);
+  }
+
+  .btn-primary:hover::before {
+    left: 100%;
+  }
+
   .btn-primary:active { transform: translateY(0); }
   .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
   .btn-secondary {
-    background: var(--gray-100);
-    color: var(--gray-600);
-    border: 1px solid var(--gray-200);
-    font-size: 12px;
-    padding: 7px 14px;
+    background: var(--gray-50);
+    color: var(--primary);
+    border: 2px solid var(--accent);
+    font-size: 13px;
+    padding: 8px 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
   }
-  .btn-secondary:hover { background: var(--gray-200); }
+  .btn-secondary:hover {
+    background: var(--accent);
+    color: var(--white);
+    box-shadow: 0 4px 12px rgba(201, 168, 76, 0.3);
+  }
+
   .btn-oab {
-    background: var(--gold);
-    color: var(--navy);
-    height: 36px;
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+    color: var(--primary);
+    height: 40px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(201, 168, 76, 0.4);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .btn-oab:hover { opacity: 0.9; }
+
+  .btn-oab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(201, 168, 76, 0.6);
+  }
+
+  .btn-oab:active {
+    transform: translateY(0);
+  }
 
   /* ─── RESULTADO ─── */
   #resultado { display: none; }
@@ -322,16 +658,31 @@
 
   .result-hero {
     text-align: center;
-    padding: 20px;
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    padding: 36px 32px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
     border-radius: var(--radius);
     color: var(--white);
-    margin-bottom: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 24px rgba(27, 42, 74, 0.25);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.8s ease 0.2s backwards;
   }
-  .result-hero-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
-  .result-hero-value { font-size: 40px; font-weight: 700; letter-spacing: -0.02em; }
-  .result-hero-sub { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
-  .result-hero-badges { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
+
+  .result-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -100px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(201, 168, 76, 0.15) 0%, transparent 70%);
+    animation: pulse 3s ease-in-out infinite;
+  }
+  .result-hero-label { font-size: 13px; color: rgba(255,255,255,0.75); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .result-hero-value { font-size: 48px; font-weight: 800; letter-spacing: -0.02em; margin: 8px 0; }
+  .result-hero-sub { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 8px; }
+  .result-hero-badges { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
 
   .result-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   .result-card {
@@ -480,26 +831,145 @@
   /* ─── AUTH OVERLAY ─── */
   .auth-overlay {
     position: fixed; inset: 0; z-index: 9999;
-    background: linear-gradient(135deg, #1B2A4A 0%, #0f1a2e 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     display: flex; align-items: center; justify-content: center;
+    animation: fadeInUp 0.6s ease;
   }
+
+  .auth-overlay::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(201, 168, 76, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .auth-overlay::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(201, 168, 76, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
   .auth-box {
     background: #fff; border-radius: 12px;
     padding: 40px 36px; width: 100%; max-width: 400px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    box-shadow: 0 20px 60px rgba(27, 42, 74, 0.4);
+    position: relative;
+    z-index: 1;
+    animation: slideDown 0.6s ease;
   }
-  .auth-logo { text-align: center; font-size: 36px; margin-bottom: 8px; }
-  .auth-title { text-align: center; font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-  .auth-sub { text-align: center; font-size: 13px; color: var(--gray-600); margin-bottom: 28px; }
+  .auth-logo {
+    text-align: center;
+    font-size: 48px;
+    margin-bottom: 12px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .auth-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 6px;
+  }
+
+  .auth-sub {
+    text-align: center;
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 28px;
+    font-weight: 600;
+  }
+
   .auth-field { margin-bottom: 16px; }
-  .auth-field label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .auth-field input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-200); border-radius: 7px; font-size: 14px; outline: none; transition: border-color 0.15s; }
-  .auth-field input:focus { border-color: var(--navy); }
-  .auth-btn { width: 100%; padding: 12px; background: var(--navy); color: #fff; border: none; border-radius: 7px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 8px; transition: background 0.15s; }
-  .auth-btn:hover { background: var(--navy-light); }
+
+  .auth-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .auth-field input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 2px solid var(--gray-200);
+    border-radius: 7px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  .auth-field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+  }
+
+  .auth-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(27, 42, 74, 0.3);
+  }
+
+  .auth-btn:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(27, 42, 74, 0.4);
+  }
+
   .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-  .auth-error { background: #fee2e2; color: #dc2626; border-radius: 7px; padding: 10px 14px; font-size: 13px; margin-bottom: 14px; display: none; }
-  .auth-footer { text-align: center; font-size: 12px; color: var(--gray-400); margin-top: 20px; }
+
+  .auth-error {
+    background: #fee2e2;
+    color: #dc2626;
+    border-radius: 7px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+    border-left: 4px solid #dc2626;
+  }
+
+  .auth-footer {
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray-400);
+    margin-top: 20px;
+  }
+
+  .auth-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+
+  .auth-footer a:hover {
+    color: var(--accent-light);
+  }
 
   /* ─── USER INFO NO HEADER ─── */
   .header-user { margin-left: auto; display: flex; align-items: center; gap: 12px; }
@@ -542,8 +1012,17 @@
 
 <!-- HEADER -->
 <header class="header">
-  <span class="header-logo">⚖️</span>
-  <span class="header-title">Calculadora de Honorários Advocatícios</span>
+  <div class="header-logo-container">
+    <div class="header-logo-img">⚖️</div>
+    <div class="header-logo">
+      <span class="header-logo-main">PrecificaJus</span>
+      <span class="header-logo-sub">PRO</span>
+    </div>
+  </div>
+  <span class="header-title">
+    <span>Calculadora de Honorários</span>
+    <span class="accent">Advocatícios</span>
+  </span>
   <div class="header-user">
     <span class="header-user-name" id="headerUserName"></span>
     <button class="header-logout" onclick="doLogout()">Sair</button>
@@ -680,6 +1159,73 @@
 
   <!-- ═══════════════ MAIN ═══════════════ -->
   <main class="main">
+
+    <!-- ═══════════════ SLIDERS PRINCIPAIS ═══════════════ -->
+    <div class="slider-section">
+      <div class="slider-section-title">
+        Ajuste os Parâmetros da Precificação
+      </div>
+
+      <!-- Margem Objetivo -->
+      <div class="slider-group">
+        <div class="slider-label">
+          <span class="slider-label-text">Margem Objetivo</span>
+          <span class="slider-value" id="sliderMargemDisplay">2.5x</span>
+        </div>
+        <div class="slider-description">Multiplicador da base de custos (quanto mais alto, maior o lucro)</div>
+        <input type="range" id="sliderMargem" min="1" max="6" step="0.1" value="2.5">
+        <div class="slider-labels">
+          <span><strong>1x</strong> Mínimo</span>
+          <span><strong>3x</strong> Padrão</span>
+          <span><strong>6x</strong> Premium</span>
+        </div>
+      </div>
+
+      <!-- Complexidade -->
+      <div class="slider-group">
+        <div class="slider-label">
+          <span class="slider-label-text">Complexidade Jurídica</span>
+          <span class="slider-value" id="sliderComplexidadeDisplay">1.70x</span>
+        </div>
+        <div class="slider-description">Quanto mais complexo, maior o ajuste no valor</div>
+        <input type="range" id="sliderComplexidade" min="1" max="5" step="1" value="3" data-values="1.00,1.30,1.70,2.20,3.00">
+        <div class="slider-labels">
+          <span><strong>Simples</strong></span>
+          <span><strong>Média</strong></span>
+          <span><strong>Muito Alta</strong></span>
+        </div>
+      </div>
+
+      <!-- Urgência -->
+      <div class="slider-group">
+        <div class="slider-label">
+          <span class="slider-label-text">Urgência</span>
+          <span class="slider-value" id="sliderUrgenciaDisplay">1.00x</span>
+        </div>
+        <div class="slider-description">Casos urgentes têm menor prazo para entrega</div>
+        <input type="range" id="sliderUrgencia" min="1" max="3" step="1" value="1" data-values="1.00,1.30,1.60">
+        <div class="slider-labels">
+          <span><strong>Normal</strong></span>
+          <span><strong>Urgente</strong></span>
+          <span><strong>Muito Urgente</strong></span>
+        </div>
+      </div>
+
+      <!-- Especificidade (novo) -->
+      <div class="slider-group">
+        <div class="slider-label">
+          <span class="slider-label-text">Especificidade do Caso</span>
+          <span class="slider-value" id="sliderEspecificidadeDisplay">1.00x</span>
+        </div>
+        <div class="slider-description">Casos com demanda muito específica justificam maior precificação</div>
+        <input type="range" id="sliderEspecificidade" min="1" max="3" step="1" value="1" data-values="1.00,1.25,1.50">
+        <div class="slider-labels">
+          <span><strong>Padrão</strong></span>
+          <span><strong>Específico</strong></span>
+          <span><strong>Muito Específico</strong></span>
+        </div>
+      </div>
+    </div>
 
     <!-- DADOS DO CASO -->
     <div class="card">
@@ -1079,7 +1625,7 @@ async function verificarAuth() {
   } catch { clearToken(); document.getElementById('authOverlay').style.display = 'flex'; return false; }
 }
 
-// ─── Configurações ──────────────────────────────────────────────────────
+// ─── Configurações ──────────────────────────────────────────────────────────
 async function carregarConfiguracoes() {
   try {
     const res = await fetch(`${API}/api/v1/user/settings`, { headers: authHeaders() });
@@ -1093,10 +1639,13 @@ async function carregarConfiguracoes() {
     if (s.iss) document.getElementById('iss').value = s.iss;
     if (s.pis_cofins) document.getElementById('pis_cofins').value = s.pis_cofins;
     if (s.irrf) document.getElementById('irrf').value = s.irrf;
+    if (s.taxa_asaas) {
+      // atualizar taxa do pix como referência (simplificado)
+    }
     updateSidebarCalc();
     updateCargaTrib();
     await carregarAreasOAB();
-  } catch(e) { console.warn('Erro ao carregar configuracoes:', e); }
+  } catch(e) { console.warn('Erro ao carregar configurações:', e); }
 }
 
 async function salvarConfiguracoes() {
@@ -1116,10 +1665,10 @@ async function salvarConfiguracoes() {
         irrf: getVal('irrf'),
       }),
     });
-  } catch(e) { console.warn('Erro ao salvar configuracoes:', e); }
+  } catch(e) { console.warn('Erro ao salvar configurações:', e); }
 }
 
-// ─── Historico ──────────────────────────────────────────────────────
+// ─── Histórico ──────────────────────────────────────────────────────────────
 async function salvarHistorico(nomeCaso, horas, valor, custoDir, margem, roi, inputData, resultData) {
   if (!getToken()) return;
   try {
@@ -1137,7 +1686,7 @@ async function salvarHistorico(nomeCaso, horas, valor, custoDir, margem, roi, in
         result_json: JSON.stringify(resultData),
       }),
     });
-  } catch(e) { console.warn('Erro ao salvar historico:', e); }
+  } catch(e) { console.warn('Erro ao salvar histórico:', e); }
 }
 
 async function carregarHistorico() {
@@ -1148,7 +1697,7 @@ async function carregarHistorico() {
     const res = await fetch(`${API}/api/v1/user/history?limit=30`, { headers: authHeaders() });
     if (!res.ok) { list.innerHTML = '<div class="history-empty">Erro ao carregar</div>'; return; }
     const items = await res.json();
-    if (!items.length) { list.innerHTML = '<div class="history-empty">Nenhum calculo salvo ainda</div>'; return; }
+    if (!items.length) { list.innerHTML = '<div class="history-empty">Nenhum cálculo salvo ainda</div>'; return; }
     list.innerHTML = items.map(item => `
       <div class="history-item">
         <button class="history-del" onclick="deletarHistorico('${item.id}',event)" title="Remover">✕</button>
@@ -1168,6 +1717,7 @@ async function deletarHistorico(id, evt) {
   } catch(e) { console.warn('Erro ao deletar:', e); }
 }
 
+// Enter no login → entrar
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && document.getElementById('authOverlay').style.display !== 'none') {
     doLogin();
@@ -1211,163 +1761,15 @@ function set(id, text) {
   if (el) el.textContent = text;
 }
 
+// ═══════════════════════════════════════
+// CÁLCULOS SIDEBAR REALTIME
+// ═══════════════════════════════════════
 function updateSidebarCalc() {
   const overhead = getNum('overhead_mensal');
   const horas = getNum('horas_uteis_mes') || 160;
   const custoHora = getNum('custo_hora_adv');
   const custoOverheadHora = overhead / horas;
   const custoTotalHora = custoHora + custoOverheadHora;
+
   document.getElementById('custo_overhead_hora').textContent = fmt(custoOverheadHora);
-  document.getElementById('custo_total_hora').textContent = fmt(custoTotalHora);
-  document.getElementById('breakeven_20h').textContent = fmt(custoTotalHora * 20);
-}
-
-function updateCargaTrib() {
-  const iss = getNum('iss');
-  const pis = getNum('pis_cofins');
-  const irrf = getNum('irrf');
-  document.getElementById('carga_tributaria_total').textContent = fmtPct(iss + pis + irrf);
-}
-
-function buildRequest() {
-  return {
-    configuracao: {
-      overhead_mensal: getNum('overhead_mensal'),
-      horas_uteis_mes: getNum('horas_uteis_mes'),
-      custo_hora_adv: getNum('custo_hora_adv'),
-      margem_objetivo: getNum('margem_objetivo'),
-    },
-    encargos: {
-      iss: getNum('iss'),
-      pis_cofins: getNum('pis_cofins'),
-      irrf: getNum('irrf'),
-    },
-    metodos_pagamento: {
-      pix:      { nome: 'PIX',     fixo: getNum('pix_fixo'),      percentual: getNum('pix_pct') },
-      boleto:   { nome: 'Boleto', fixo: getNum('boleto_fixo'),   percentual: getNum('boleto_pct') },
-      debito:   { nome: 'Debito', fixo: getNum('debito_fixo'),   percentual: getNum('debito_pct') },
-      cred_av:  { nome: 'Credito a vista', fixo: getNum('cred_av_fixo'), percentual: getNum('cred_av_pct') },
-      cred_26:  { nome: 'Credito 2-6x',   fixo: getNum('cred_26_fixo'), percentual: getNum('cred_26_pct') },
-      cred_712: { nome: 'Credito 7-12x',  fixo: getNum('cred_712_fixo'), percentual: getNum('cred_712_pct') },
-    },
-    caso: {
-      nome_caso: getVal('nome_caso') || 'Sem identificacao',
-      tipo_acao: getVal('tipo_acao'),
-      fase: getVal('fase'),
-      complexidade: getVal('complexidade'),
-      valor_causa: getNum('valor_causa'),
-      horas_estimadas: getNum('horas_estimadas'),
-      probabilidade_exito: getVal('probabilidade_exito'),
-      urgencia: getVal('urgencia'),
-      duracao: getVal('duracao'),
-      metodo_pagamento: getVal('metodo_pagamento'),
-      uf: getVal('uf'),
-    },
-  };
-}
-
-async function calcular() {
-  const nomeCaso = getVal('nome_caso').trim();
-  if (!nomeCaso) { showToast('Informe a identificacao do caso.'); document.getElementById('nome_caso').focus(); return; }
-  if (getNum('horas_estimadas') <= 0) { showToast('Horas estimadas deve ser maior que zero.'); return; }
-  const btn = document.getElementById('btnCalcular');
-  btn.disabled = true;
-  showLoading(true);
-  try {
-    const req = buildRequest();
-    const resp = await fetch(`${API}/api/v1/honorarios/calcular`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders() },
-      body: JSON.stringify(req),
-    });
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({ detail: resp.statusText }));
-      throw new Error(err.detail || `Erro ${resp.status}`);
-    }
-    const data = await resp.json();
-    renderResultado(data);
-    document.getElementById('resultado').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    showToast('Cálculo realizado com sucesso!', 'success');
-    const comp = data.composicao || {};
-    const cb = data['cálculo_base'] || data.calculo_base || {};
-    await salvarHistorico(nomeCaso, getNum('horas_estimadas'), fmt(comp.valor_final), fmt(cb.custo_direto), fmtPct(comp.margem_bruta_pct), fmtX(comp.roi), req, data);
-  } catch (e) {
-    showToast(`Erro ao calcular: ${e.message}`);
-    console.error(e);
-  } finally {
-    btn.disabled = false;
-    showLoading(false);
-  }
-}
-
-function renderResultado(d) {
-  document.getElementById('resultado').style.display = 'block';
-  const cb = d['cálculo_base'] || d.calculo_base || {};
-  const trib = d.tributario || {};
-  const comp = d.composicao || {};
-  const asaas = d.asaas || {};
-  set('resultCaso', d.caso || '—');
-  set('resultValorFinal', fmt(comp.valor_final));
-  const vib = d.viabilidade || 'ok';
-  const vibEl = document.getElementById('resultViabilidade');
-  vibEl.textContent = vib === 'ok' ? '✅ Viável' : vib === 'warning' ? '⚠️ Atenção' : '❌ Inviável';
-  vibEl.className = `viability-badge viability-${vib}`;
-  set('rc_custo_direto', fmt(cb.custo_direto));
-  set('rc_overhead', fmt(cb.overhead_alocado));
-  set('rc_breakeven', fmt(cb.custo_total));
-  set('rc_multiplicador', fmtX(cb.multiplicador_total));
-  const roi = cb.roi || 0;
-  const roiEl = document.getElementById('rc_roi');
-  roiEl.textContent = fmtPct(roi);
-  roiEl.className = `result-row-value ${roi >= 100 ? 'green' : roi >= 50 ? '' : 'red'}`;
-  set('rc_iss', fmt(trib.iss_valor));
-  set('rc_pis', fmt(trib.pis_cofins_valor));
-  set('rc_irrf', fmt(trib.irrf_valor));
-  set('rc_trib_total', fmt(trib.total_tributario));
-  set('rc_honor_base', fmt(comp.honor_base));
-  set('rc_impostos', fmt(comp.total_impostos_taxas));
-  set('rc_asaas', fmt(asaas.valor_total));
-  set('rc_margem', fmt(cb.margem_bruta));
-  set('rc_final', fmt(comp.valor_final));
-  const total = comp.valor_final || 1;
-  const segments = [
-    { label: 'Custo Direto', value: cb.custo_direto, color: '#1B2A4A' },
-    { label: 'Overhead', value: cb.overhead_alocado, color: '#2d4a7a' },
-    { label: 'Margem', value: cb.margem_bruta - (trib.total_tributario||0) - (asaas.valor_total||0), color: '#16a34a' },
-    { label: 'Tributário', value: trib.total_tributario, color: '#dc2626' },
-    { label: 'Asaas', value: asaas.valor_total, color: '#C9A84C' },
-  ];
-  const bar = document.getElementById('composicaoBar');
-  const legend = document.getElementById('composicaoLegend');
-  bar.innerHTML = segments.map(s => { const pct = Math.max(0,(s.value/total)*100); return `<div class="bar-segment" style="width:${pct.toFixed(1)}%;background:${s.color};" title="${s.label}: ${fmt(s.value)}"></div>`; }).join('');
-  legend.innerHTML = segments.map(s => `<div class="bar-legend-item"><div class="bar-dot" style="background:${s.color};"></div>${s.label}: ${fmt(s.value)}</div>`).join('');
-  if (d.valor_oab_minimo) { document.getElementById('oabRefCard').style.display='block'; set('oab_min_ref',fmt(d.valor_oab_minimo)); set('oab_pct_causa',d.percentual_causa?fmtPct(d.percentual_causa):'—'); set('oab_exito',d.honor_exito_sugerido?fmt(d.honor_exito_sugerido):'—'); } else { document.getElementById('oabRefCard').style.display='none'; }
-  const obs=d.observacoes||[]; const ul=document.getElementById('observacoes');
-  if(obs.length>0){ ul.innerHTML=obs.map(o=>{const type=o.toLowerCase().includes('acima')||o.toLowerCase().includes('saud')?'ok':o.toLowerCase().includes('abaixo')||o.toLowerCase().includes('aten')?'warning':'info'; return `<li class="obs-${type}">${o}</li>`;}).join(''); document.getElementById('obsCard').style.display='block'; } else { document.getElementById('obsCard').style.display='none'; }
-}
-
-function limparResultado(){document.getElementById('resultado').style.display='none';}
-
-async function carregarAreasOAB(){const uf=getVal('uf');const sel=document.getElementById('oab_area');sel.innerHTML='<option value="">Carregando...</option>';try{const resp=await fetch(`${API}/api/v1/honorarios/oab/${uf}/areas`);if(!resp.ok)throw new Error('UF sem tabela cadastrada');const areas=await resp.json();sel.innerHTML='<option value="">— Selecione a área —</option>';Object.entries(areas).forEach(([k,v])=>{sel.innerHTML+=`<option value="${k}">${v}</option>`;});document.getElementById('oab_servico').innerHTML='<option value="">— Selecione a área —</option>';}catch(e){sel.innerHTML='<option value="">Tabela não disponível para esta UF</option>';}}
-
-async function carregarServicosOAB(){const uf=getVal('uf');const area=getVal('oab_area');if(!area)return;const sel=document.getElementById('oab_servico');sel.innerHTML='<option value="">Carregando...</option>';try{const resp=await fetch(`${API}/api/v1/honorarios/oab/${uf}/areas/${area}/servicos`);if(!resp.ok)throw new Error();const servicos=await resp.json();sel.innerHTML='<option value="">— Selecione o serviço —</option>';Object.entries(servicos).forEach(([k,v])=>{sel.innerHTML+=`<option value="${k}">${v.nome||k}</option>`;});}catch(e){sel.innerHTML='<option value="">Erro ao carregar serviços</option>';}}
-
-async function consultarOAB(){const uf=getVal('uf');const area=getVal('oab_area');const servico=getVal('oab_servico');if(!area||!servico){showToast('Selecione área e serviço para consultar.');return;}try{const resp=await fetch(`${API}/api/v1/honorarios/oab/${uf}/areas/${area}/servicos/${servico}/valor`);if(!resp.ok)throw new Error('Serviço não encontrado');const data=await resp.json();const div=document.getElementById('oabResult');div.style.display='flex';document.getElementById('oabServicNome').textContent=data.nome||servico;document.getElementById('oabValorMin').textContent=fmt(data.valor_minimo);}catch(e){showToast(`OAB: ${e.message}`);}}
-
-function copiarResultado(){const caso=document.getElementById('resultCaso')?.textContent||'';const valor=document.getElementById('resultValorFinal')?.textContent||'';const roi=document.getElementById('rc_roi')?.textContent||'';const margem=document.getElementById('rc_margem')?.textContent||'';const texto=`PRECIFICAÇÃO DE HONORÁRIOS\n${'='.repeat(40)}\n\nCaso: ${caso}\nValor Final: ${valor}\nMargem Bruta: ${margem}\nROI: ${roi}\n\nCusto direto: ${document.getElementById('rc_custo_direto')?.textContent}\nOverhead: ${document.getElementById('rc_overhead')?.textContent}\nBreak-even: ${document.getElementById('rc_breakeven')?.textContent}\nMultiplicador: ${document.getElementById('rc_multiplicador')?.textContent}\n\nTributário total: ${document.getElementById('rc_trib_total')?.textContent}\nTaxa Asaas: ${document.getElementById('rc_asaas')?.textContent}\nVALOR FINAL: ${valor}`;navigator.clipboard.writeText(texto).then(()=>showToast('Resultado copiado!','success')).catch(()=>showToast('Erro ao copiar'));}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  const autenticado = await verificarAuth();
-  if (autenticado) { document.getElementById('authOverlay').style.display='none'; await carregarConfiguracoes(); }
-  ['overhead_mensal','horas_uteis_mes','custo_hora_adv','margem_objetivo'].forEach(id=>{document.getElementById(id)?.addEventListener('input',()=>{updateSidebarCalc();salvarConfiguracoes();});});
-  ['iss','pis_cofins','irrf'].forEach(id=>{document.getElementById(id)?.addEventListener('input',()=>{updateCargaTrib();salvarConfiguracoes();});});
-  document.getElementById('uf')?.addEventListener('change',()=>{carregarAreasOAB();salvarConfiguracoes();});
-  updateSidebarCalc();
-  updateCargaTrib();
-});
-
-document.addEventListener('keydown',(e)=>{if(e.key==='Enter'&&e.ctrlKey)calcular();});
-</script>
-
-</body>
-</html>
+  document.g

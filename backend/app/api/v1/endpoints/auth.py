@@ -3,6 +3,8 @@ Endpoints de autenticação:
   POST /api/v1/auth/login          → retorna JWT
   GET  /api/v1/auth/me             → dados do usuário logado
   POST /api/v1/auth/create-user    → admin cria conta pós-pagamento
+  POST /api/v1/auth/setup          → cria primeiro usuário (só funciona se DB vazio)
+  POST /api/v1/auth/admin-reset    → reset temporário do banco (token hardcoded)
 """
 import os
 from datetime import datetime, timedelta
@@ -22,7 +24,7 @@ router = APIRouter(prefix="/auth", tags=["Autenticação"])
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-# ─── Helpers JWT ──────────────────────────────────────────────
+# ─── Helpers JWT ───────────────────────────────────────────────────────────
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
 
@@ -69,7 +71,7 @@ def get_current_user(
     return user
 
 
-# ─── Endpoints ───────────────────────────────────────────────────────
+# ─── Endpoints ─────────────────────────────────────────────────────────────
 
 @router.post("/login", response_model=TokenResponse)
 def login(body: LoginRequest, db: Session = Depends(get_db)):
@@ -133,11 +135,28 @@ def create_user(
     )
     db.add(user)
     db.flush()
-    # Criar configurações padrão para o usuário
     db.add(UserSettings(user_id=user.id))
     db.commit()
     db.refresh(user)
     return user
+
+
+@router.post("/admin-reset", response_model=dict)
+def admin_reset(
+    x_reset_token: str = Header(..., alias="x-reset-token"),
+    db: Session = Depends(get_db),
+):
+    """
+    Endpoint temporario de reset — apaga todos os usuarios para permitir novo setup.
+    Requer header x-reset-token: PRECIFICAJUS_RESET_2025
+    """
+    if x_reset_token != "PRECIFICAJUS_RESET_2025":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Token invalido")
+    db.query(UserSettings).delete()
+    count = db.query(User).count()
+    db.query(User).delete()
+    db.commit()
+    return {"deleted": count, "message": "Reset concluido. Chame /setup para criar novo admin."}
 
 
 @router.post("/setup", response_model=UserOut, status_code=201)
